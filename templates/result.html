@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #0f172a, #1e3a8a, #2563eb);
+    min-height: 100vh;
+    padding: 40px;
+}
+
+.dashboard {
+    max-width: 1400px;
+    margin: auto;
+}
+
+/* ── Header ── */
+.header {
+    background: rgba(255,255,255,.12);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255,255,255,.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 35px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    color: white;
+    box-shadow: 0 15px 40px rgba(0,0,0,.25);
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.profile img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 4px solid white;
+    object-fit: cover;
+}
+
+.profile h1 { font-size: 28px; margin-bottom: 5px; }
+.profile p  { opacity: .9; font-size: 14px; }
+
+.header-title { text-align: center; }
+.header-title h2 { font-size: 26px; }
+.header-title p  { margin-top: 6px; opacity: .8; font-size: 14px; }
+
+/* ── Dark Mode Toggle ── */
+.theme-toggle button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    background: white;
+    color: #2563EB;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .3s;
+    white-space: nowrap;
+    font-family: 'Poppins', sans-serif;
+}
+.theme-toggle button:hover { transform: scale(1.05); }
+
+/* ── Cards shared style ── */
+.card {
+    color: white;
+    padding: 25px 20px;
+    border-radius: 18px;
+    text-align: center;
+    transition: .35s;
+    box-shadow: 0 10px 25px rgba(0,0,0,.25);
+}
+.card:hover { transform: translateY(-8px); }
+.card h3 { font-weight: 500; margin-bottom: 12px; font-size: 15px; }
+.card h1 { font-size: 36px; }
+.card p  { font-size: 14px; margin-top: 8px; opacity: .9; }
+
+/* ── Row 1: 4 main cards ── */
+.cards-row1 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+/* ── Row 1: 4 main cards ── */
+.cards-row1 .card:nth-child(1) {
+    background: linear-gradient(135deg, #1e3a5f, #1e40af);  /* Deep Navy Blue */
+}
+
+.cards-row1 .card:nth-child(2) {
+    background: linear-gradient(135deg, #134e4a, #0f766e);  /* Deep Teal */
+}
+
+.cards-row1 .card:nth-child(3) {
+    background: linear-gradient(135deg, #14532d, #15803d);  /* Deep Forest Green */
+}
+
+.cards-row1 .card:nth-child(4) {
+    background: linear-gradient(135deg, #3b0764, #6b21a8);  /* Deep Royal Purple */
+}
+
+/* ── Row 2: Rank cards ── */
+
+/* ── Row 2: Rank cards — same 4-col grid, occupy col 1 & 2 only ── */
+.cards-row2 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.cards-row2 .card:nth-child(1) {
+    grid-column: 1;
+    background: linear-gradient(135deg, #1e1b4b, #3730a3);  /* Indigo */
+}
+
+.cards-row2 .card:nth-child(2) {
+    grid-column: 2;
+    background: linear-gradient(135deg, #0c4a6e, #0369a1);  /* Steel Blue */
+}
+
+/* ── Table ── */
+.table-container {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    overflow-x: auto;
+    box-shadow: 0 15px 40px rgba(0,0,0,.25);
+    -webkit-overflow-scrolling: touch;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1100px;
+}
+
+th {
+    background: #1E40AF;
+    color: white;
+    padding: 14px 10px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+td {
+    padding: 12px 10px;
+    text-align: center;
+    border-bottom: 1px solid #ececec;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+td:first-child {
+    white-space: normal;
+    min-width: 140px;
+    text-align: left;
+    padding-left: 16px;
+}
+
+tr:hover { background: #f3f7ff; }
+
+/* ── Progress Bar ── */
+.progress {
+    width: 100%;
+    height: 8px;
+    background: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 5px;
+    min-width: 70px;
+}
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #2563EB, #06B6D4);
+    border-radius: 10px;
+}
+
+/* ── Grade Badges ── */
+.grade {
+    padding: 4px 10px;
+    border-radius: 20px;
+    color: white;
+    font-weight: 600;
+    font-size: 12px;
+    display: inline-block;
+}
+.grade-O     { background: #16A34A; }
+.grade-Aplus { background: #2563EB; }
+.grade-A     { background: #7C3AED; }
+.grade-Bplus { background: #F97316; }
+.grade-B     { background: #EAB308; }
+.grade-C     { background: #EF4444; }
+.grade-F     { background: #991B1B; }
+
+/* ── Analysis Box ── */
+.analysis {
+    margin-top: 30px;
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.15);
+}
+.analysis h2 { color: #2563EB; margin-bottom: 15px; font-size: 20px; }
+.analysis p  { font-size: 17px; line-height: 1.6; }
+
+/* ── Buttons ── */
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 35px;
+    flex-wrap: wrap;
+}
+.btn {
+    text-decoration: none;
+    background: #2563EB;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: .3s;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    font-family: 'Poppins', sans-serif;
+}
+.btn:hover { background: #1E40AF; transform: translateY(-3px); }
+
+/* ════════════════════════════════
+   DARK MODE
+════════════════════════════════ */
+body.dark { background: linear-gradient(135deg, #111827, #1F2937, #000); }
+body.dark .header          { background: rgba(20,20,20,.8); }
+body.dark .table-container { background: #1F2937; }
+body.dark table            { color: white; }
+body.dark td               { border-color: #374151; }
+body.dark tr:hover         { background: #2D3748; }
+body.dark .card            { filter: brightness(.9); }
+body.dark .analysis        { background: #1F2937; color: white; }
+body.dark .analysis h2     { color: #60A5FA; }
+body.dark .btn             { background: #3B82F6; }
+body.dark .btn:hover       { background: #2563EB; }
+
+/* ════════════════════════════════
+   RESPONSIVE
+════════════════════════════════ */
+
+/* Tablet landscape (≤1200px) */
+@media (max-width: 1200px) {
+    body { padding: 24px; }
+
+    .cards-row1 { grid-template-columns: repeat(2, 1fr); }
+    .cards-row2 { grid-template-columns: repeat(2, 1fr); }
+    .cards-row2 .card:nth-child(1) { grid-column: 1; }
+    .cards-row2 .card:nth-child(2) { grid-column: 2; }
+}
+
+/* Tablet portrait (≤900px) */
+@media (max-width: 900px) {
+    body { padding: 20px; }
+
+    .header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 18px;
+        padding: 24px 20px;
+    }
+    .header-title { text-align: center; }
+    .profile { flex-direction: column; align-items: center; }
+    .profile h1  { font-size: 24px; }
+    .profile img { width: 80px; height: 80px; }
+
+    .cards-row1 { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .cards-row2 { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .cards-row2 .card:nth-child(1) { grid-column: 1; }
+    .cards-row2 .card:nth-child(2) { grid-column: 2; }
+
+    .card h1 { font-size: 30px; }
+}
+
+/* Mobile (≤600px) */
+@media (max-width: 600px) {
+    body { padding: 14px; }
+
+    .header {
+        padding: 20px 16px;
+        gap: 14px;
+        border-radius: 16px;
+    }
+    .header-title h2 { font-size: 18px; }
+    .header-title p  { font-size: 13px; }
+    .profile img { width: 68px; height: 68px; }
+    .profile h1  { font-size: 20px; }
+    .profile p   { font-size: 13px; }
+
+    .cards-row1 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    .cards-row2 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    .cards-row2 .card:nth-child(1) { grid-column: 1; }
+    .cards-row2 .card:nth-child(2) { grid-column: 2; }
+
+    .card { padding: 16px 12px; border-radius: 14px; }
+    .card h3 { font-size: 12px; margin-bottom: 6px; }
+    .card h1 { font-size: 24px; }
+    .card p  { font-size: 12px; }
+
+    .analysis { padding: 18px 16px; border-radius: 14px; }
+    .analysis h2 { font-size: 16px; }
+    .analysis p  { font-size: 14px; }
+
+    .buttons {
+        flex-direction: column;
+        align-items: stretch;
+        margin-top: 24px;
+        gap: 12px;
+    }
+    .btn {
+        width: 100%;
+        text-align: center;
+        padding: 14px 20px;
+        font-size: 14px;
+        border-radius: 12px;
+    }
+}
+
+/* Very small phones (≤400px) */
+@media (max-width: 400px) {
+    body { padding: 10px; }
+
+    .cards-row1 { grid-template-columns: 1fr; }
+    .cards-row2 { grid-template-columns: 1fr; }
+    .cards-row2 .card:nth-child(1) { grid-column: 1; }
+    .cards-row2 .card:nth-child(2) { grid-column: 1; }
+
+    .card h1 { font-size: 30px; }
+    .header-title h2 { font-size: 16px; }
+    th, td { padding: 10px 8px; font-size: 12px; }
+}
+/* ===========================
+           FOOTER
+=========================== */
+
+.footer{
+
+    margin-top:50px;
+
+    background:rgba(255,255,255,.12);
+
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,.2);
+
+    border-radius:18px;
+
+    padding:30px;
+
+    text-align:center;
+
+    color:white;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.25);
+
+    transition:.3s;
+
+}
+
+.footer:hover{
+
+    transform:translateY(-5px);
+
+}
+
+.footer h2{
+
+    margin-bottom:12px;
+
+    font-size:28px;
+
+}
+
+.footer p{
+
+    margin:8px 0;
+
+    font-size:15px;
+
+    opacity:.95;
+
+}
+
+.footer-line{
+
+    width:120px;
+
+    height:3px;
+
+    background:white;
+
+    margin:20px auto;
+
+    border-radius:10px;
+
+}
+
+.copyright{
+
+    font-size:14px;
+
+    opacity:.8;
+
+}
+
+/* Dark Mode Footer */
+
+body.dark .footer{
+
+    background:rgba(20,20,20,.85);
+
+    color:white;
+
+    border:1px solid rgba(255,255,255,.08);
+
+}
+
+    </style>
+</head>
+<body>
+
+<div class="dashboard">
+
+    <!-- Header -->
+    <div class="header">
+
+        <div class="profile">
+            {% if student[5] == "Male" %}
+            <img src="https://ui-avatars.com/api/?name={{ student[1] }}&background=2563eb&color=fff&size=256">
+            {% else %}
+            <img src="https://ui-avatars.com/api/?name={{ student[1] }}&background=ec4899&color=fff&size=256">
+            {% endif %}
+            <div>
+                <h1>{{ student[1] }}</h1>
+                <p><strong>Roll No:</strong> {{ student[2] }}</p>
+                <p><strong>Branch:</strong> {{ student[3] }}</p>
+                <p><strong>Year:</strong> {{ student[4] }}</p>
+                <p><strong>Gender:</strong> {{ student[5] }}</p>
+            </div>
+        </div>
+
+        <div class="header-title">
+            <h2>🎓 Student Performance Tracker</h2>
+            <p>Semester-I Academic Report</p>
+        </div>
+
+        <div class="theme-toggle">
+            <button id="theme-btn">🌙 Dark Mode</button>
+        </div>
+
+    </div>
+
+    <!-- Row 1: Main 4 Cards -->
+    <div class="cards-row1">
+        <div class="card">
+            <h3>SGPA</h3>
+            <h1>{{ sgpa }}</h1>
+        </div>
+        <div class="card">
+            <h3>Percentage</h3>
+            <h1>{{ percentage }}%</h1>
+        </div>
+        <div class="card">
+            <h3>Result</h3>
+            {% if result=="PASS" %}
+                <h1>✅ PASS</h1>
+            {% else %}
+                <h1>❌ FAIL</h1>
+            {% endif %}
+        </div>
+        <div class="card">
+            <h3>Performance</h3>
+            <h1>{{ performance }}</h1>
+        </div>
+    </div>
+
+    <!-- Row 2: Rank Cards below SGPA and Percentage -->
+    <div class="cards-row2">
+        <div class="card">
+            <h3>🏅 Overall Rank</h3>
+            <h1>{{ overall_rank }}/{{ total_students }}</h1>
+        </div>
+        <div class="card">
+            <h3>🏆 Branch Rank</h3>
+            <h1>{{ branch_rank }}/{{ branch_strength }}</h1>
+            {% if is_topper %}
+                <p>👑 Branch Topper</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Subject Table -->
+    <div class="table-container">
+        <table>
+            <tr>
+                <th>Subject</th>
+                <th>Credits</th>
+                <th>Mid 1</th>
+                <th>Mid 2</th>
+                <th>Slip 1</th>
+                <th>Slip 2</th>
+                <th>Slip 3</th>
+                <th>Assignment 1</th>
+                <th>Assignment 2</th>
+                <th>Attendance %</th>
+                <th>Semester</th>
+                <th>Total</th>
+                <th>Grade</th>
+                <th>GP</th>
+            </tr>
+            {% for row in marks %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1] }}</td>
+                <td>{{ row[2] }}</td>
+                <td>{{ row[3] }}</td>
+                <td>{{ row[4] }}</td>
+                <td>{{ row[5] }}</td>
+                <td>{{ row[6] }}</td>
+                <td>{{ row[7] }}</td>
+                <td>{{ row[8] }}</td>
+                <td>{{ row[9] }}%</td>
+                <td>{{ row[10] }}</td>
+                <td>
+                    <strong>{{ row[11] }}</strong>
+                    <div class="progress">
+                        <div class="progress-bar" style="width:{{ row[11] }}%;"></div>
+                    </div>
+                </td>
+                <td>
+                    <span class="grade grade-{{ row[12]|replace('+','plus') }}">
+                        {{ row[12] }}
+                    </span>
+                </td>
+                <td>{{ row[13] }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <!-- Performance Analysis -->
+    <div class="analysis">
+        <h2>📈 Performance Analysis</h2>
+        {% if sgpa>=9 %}
+        <p>🌟 Outstanding Performance! Keep maintaining your consistency. You are among the top-performing students.</p>
+        {% elif sgpa>=8 %}
+        <p>🎉 Very Good Performance. A little more effort can help you achieve an Outstanding grade.</p>
+        {% elif sgpa>=7 %}
+        <p>👍 Good Performance. Focus on improving your semester exam scores for a higher SGPA.</p>
+        {% else %}
+        <p>📚 Work harder next semester. Regular practice and attendance will significantly improve your results.</p>
+        {% endif %}
+    </div>
+
+    <!-- Buttons -->
+    <div class="buttons">
+        <a href="/" class="btn">🔍 Search Another Student</a>
+        <button class="btn" onclick="window.print()">📄 Download PDF</button>
+    </div>
+
+</div>
+<footer class="footer">
+
+    <div class="footer-content">
+
+        <h2>🎓 Student Performance Tracker</h2>
+
+        <p>
+            Developed by <strong>Shaik Raza</strong>
+        </p>
+
+        <p>
+            B.Tech Information Technology | Chaitanya Bharathi Institute of Technology
+        </p>
+
+        <div class="footer-line"></div>
+
+        <p class="copyright">
+            © 2026 Student Performance Tracker. All Rights Reserved.
+        </p>
+
+    </div>
+
+</footer>
+
+<script>
+const btn = document.getElementById("theme-btn");
+
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+    btn.innerHTML = "☀️ Light Mode";
+}
+
+btn.onclick = function () {
+    document.body.classList.toggle("dark");
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("theme", "dark");
+        btn.innerHTML = "☀️ Light Mode";
+    } else {
+        localStorage.setItem("theme", "light");
+        btn.innerHTML = "🌙 Dark Mode";
+    }
+};
+</script>
+
+</body>
+</html>
